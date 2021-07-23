@@ -1,0 +1,66 @@
+Select replace('GLOCK, Inc.',',',' ') as 'MFG_NAME', 
+wb.WEAPONID as 'SERIAL_NO', 
+it.KCSWEAPONITEMTYPEID as 'WEAPON_TYPE',
+left(sc.glk_selectioncodedescription, 1) + right(left(sc.glk_selectioncodedescription, 8),2) as 'WEAPON_MODEL',
+Case it.GLK_CALIBERID
+when '.22 L.r.' Then '.22'
+when '9mm Luger' Then '9X19'
+when '9 mm UTM' Then '9X19'
+when '9mm FX' Then '9X19'
+when '9x18 Makarov' Then '9X19'
+when '9MM' Then '9X19'
+when '9mm' Then '9X19'
+when '9x19' Then '9X19'
+when '9' Then '9X19'
+when '0.4' Then '.40'
+when '10mm' Then '10MM'
+when '10' Then '10MM'
+when '0.45' Then '.45'
+when '.45 ACP' Then '.45'
+when '0.357' Then '.357'
+when '0.38' Then '380'
+else it.GLK_CALIBER
+end as 'WEAPON_CALIBER',
+left(replace(lpa.IBIS_FFL, '-', ''),20) as 'DISPOSITION_FFL' , 
+convert(varchar(10), wb.SHIPPINGDATE, 101) as 'DISPOSITION_DATE', 
+wb.SALESID as 'INVOICE_NO',
+ left(REPLACE(REPLACE(REPLACE(REPLACE( wb.DELIVERYNAME,',',' '), CHAR(13), ''),  CHAR(10), ''),  CHAR(34), ''), 50) AS 'DISPOSITION_NAME',
+ left(REPLACE(REPLACE(REPLACE(REPLACE( lpa.street,',',' '), CHAR(13), ''),  CHAR(10), ''),  CHAR(34), ''), 50) AS 'DISPOSITION_ADDR1',
+ --left(lpa.street,50) AS 'Street',
+ '' as 'DISPOSITION_ADDR2', 
+ lpa.city as 'DISPOSITION_CITY', 
+ lpa.state as 'DISPOSITION_STATE', 
+ lpa.zipcode as 'DISPOSITION_ZIP', 
+ '' as 'MISC_DESC', 
+ '' as 'MANUFACTURE_DATE',
+ '' as 'IMPORT_DATE',
+ '' as 'ACQUISITION_DATE',
+ '' as 'MFG_COUNTRY',
+ '' as 'ORIGINATING_FFL',
+ '' as '4473_TRANSACTION_NO',
+ '' as 'ACQUIRED_FROM_NAME',
+ '' as 'ACQUIRED_FROM_ADDR1',
+ '' as 'ACQUIRED_FROM_ADDR2',
+ '' as 'ACQUIRED_FROM_CITY',
+ '' as 'ACQUIRED_FROM_STATE',
+ '' as 'ACQUIRED_FROM_ZIP',
+ '' as 'ACQUIRED_FROM_LICENSE_NO',
+ '' as 'IMPORTER'
+ --left(replace(lpa.IBIS_FFL, '-', ''),20) as 'FFL2' -- this is in here twice
+from KCSWEAPONBOOKJOURNALTABLE wb
+join custtable cus on cus.ACCOUNTNUM = wb.CUSTACCOUNT
+join SALESTABLE s on s.SALESID = wb.SALESID
+join LogisticsPostalAddress lpa on s.DELIVERYPOSTALADDRESS = lpa.RECID
+join inventtable it on it.ITEMID = wb.ITEMID
+join GLK_SELECTIONCODETABLE sc on sc.GLK_SELECTIONCODEID = it.GLK_INVENTTABLE_SELECTIONCODEID
+--where wb.SHIPPINGDATE >= '2014-12-01' 
+where wb.SHIPPINGDATE between '2020-04-01' and '2020-04-30'
+--where wb.SHIPPINGDATE = '2014-12-01' 
+and lpa.VALIDTO = '2154-12-31 23:59:59.000'
+and wb.ITEMID not like 'SP%'
+and len(wb.ITEMID) > 6
+and cus.CUSTCLASSIFICATIONID <> 'Export'
+and cus.CUSTGROUP <> '8'
+and wb.CROSSEDOUT = 0
+and wb.DATAAREAID = 'GUSA' and wb.PARTITION = 5637144576
+and cus.DATAAREAID = 'GUSA' and cus.PARTITION = 5637144576
