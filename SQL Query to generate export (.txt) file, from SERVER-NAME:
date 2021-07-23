@@ -1,4 +1,4 @@
-Select replace('GLOCK, Inc.',',',' ') as 'MFG_NAME', 
+Select replace('Company, Inc.',',',' ') as 'MFG_NAME', 
 wb.WEAPONID as 'SERIAL_NO', 
 it.KCSWEAPONITEMTYPEID as 'WEAPON_TYPE',
 left(sc.glk_selectioncodedescription, 1) + right(left(sc.glk_selectioncodedescription, 8),2) as 'WEAPON_MODEL',
@@ -52,7 +52,7 @@ join custtable cus on cus.ACCOUNTNUM = wb.CUSTACCOUNT
 join SALESTABLE s on s.SALESID = wb.SALESID
 join LogisticsPostalAddress lpa on s.DELIVERYPOSTALADDRESS = lpa.RECID
 join inventtable it on it.ITEMID = wb.ITEMID
-join GLK_SELECTIONCODETABLE sc on sc.GLK_SELECTIONCODEID = it.GLK_INVENTTABLE_SELECTIONCODEID
+join GLK_SELECTIONCODETABLE sc on sc.GGG_SELECTIONCODEID = it.GLK_INVENTTABLE_SELECTIONCODEID
 --where wb.SHIPPINGDATE >= '2014-12-01' 
 where wb.SHIPPINGDATE between '2020-04-01' and '2020-04-30'
 --where wb.SHIPPINGDATE = '2014-12-01' 
